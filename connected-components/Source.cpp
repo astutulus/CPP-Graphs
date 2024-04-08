@@ -1,3 +1,4 @@
+#include <algorithm> // sort
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -9,8 +10,7 @@
 const std::string FILENAME[]
 {
     "SCC.txt",
-    "test_pairs.txt",
-    "test_pairs_2.txt"
+    "test_pairs.txt"
 };
 
 // Kosaraju requires both directions of graph
@@ -21,7 +21,7 @@ std::map<int, std::set<int>*> leader_groups;
 
 static bool build_graphs()
 {
-    std::ifstream inputFile(FILENAME[2]);
+    std::ifstream inputFile(FILENAME[1]);
     if (!inputFile)
     {
         std::cerr << "Error opening file." << std::endl;
@@ -129,6 +129,7 @@ int main()
     }
     else
     {
+        // First pass
         // Each node in reversed graph
         for (const auto& pair : rev_graph)
         {
@@ -138,6 +139,7 @@ int main()
 
         nodes_seen = {}; // Empty
 
+        // Second pass
         // Each node in forward graph
         // In the order specified by the finishing times
         for (auto it = nodes_in_asc_finish_time.rbegin(); it != nodes_in_asc_finish_time.rend(); ++it)
@@ -145,6 +147,20 @@ int main()
             s = *it;
             DFS_Loop_Two(fwd_graph, s);
         };
+
+        // Count leader group sizes
+        std::vector<int> SCC_Sizes;
+
+        for (const auto& [key, value] : leader_groups)
+        {
+            SCC_Sizes.push_back(value->size());
+        }
+
+        std::sort(SCC_Sizes.begin(), SCC_Sizes.end());
+
+        std::cout << "Largest SCC is: " << SCC_Sizes.back() << std::endl;
+           
+
         return 0;
     }
 }
