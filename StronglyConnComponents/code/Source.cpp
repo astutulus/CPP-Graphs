@@ -158,9 +158,16 @@ int main()
             SCC_Sizes.push_back(value->size());
         }
 
-        std::sort(SCC_Sizes.begin(), SCC_Sizes.end());
+        std::sort(SCC_Sizes.begin(), SCC_Sizes.end(), std::greater{});
 
-        std::cout << "Largest SCC is: " << SCC_Sizes.back() << std::endl;
+        int numberToPrint = std::min(5, (int)SCC_Sizes.size());
+
+
+        for (size_t i = 0; i < numberToPrint; i++)
+        {
+
+            std::cout << i << " -> " << SCC_Sizes[i] << std::endl;
+        }
            
 
         return 0;
