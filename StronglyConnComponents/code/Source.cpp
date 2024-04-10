@@ -7,10 +7,11 @@
 #include <set>
 
 // Select test without re-typing
-const std::string FILENAME[]
+const std::string FILEPATH[]
 {
-    "SCC.txt",
-    "test_pairs.txt"
+    // Path is relative to the project root (not this file's location)
+    "assignment-data\\SCC.txt",
+    "..\\GraphSln\\sample-data\\test_pairs_2.txt"
 };
 
 // Kosaraju requires both directions of graph
@@ -21,7 +22,8 @@ std::map<int, std::set<int>*> leader_groups;
 
 static bool build_graphs()
 {
-    std::ifstream inputFile(FILENAME[1]);
+    std::string fn = FILEPATH[1];
+    std::ifstream inputFile(fn);
     if (!inputFile)
     {
         std::cerr << "Error opening file." << std::endl;
