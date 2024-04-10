@@ -128,8 +128,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Image Include="sample-data\test_pairs.png" />
+    <Image Include="sample-data\test_pairs_2.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="sample-data\test_pairs.txt" />
     <Text Include="sample-data\test_pairs_2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
