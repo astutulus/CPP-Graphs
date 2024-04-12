@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stack>
 #include <tuple>
 #include <map>
 #include <set>
@@ -63,7 +64,7 @@ std::set<int> nodes_seen{};
 
 int curr_finish_time = 0;
 // std::map<int, int> node_finish_times;
-std::vector<int> nodes_in_asc_finish_time;
+std::stack<int> nodes_in_asc_finish_time;
 
 /*
 Depth First Search
@@ -83,7 +84,7 @@ static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
             DFS_Loop_One(graph, connection);
         }
     }
-    nodes_in_asc_finish_time.push_back(node);
+    nodes_in_asc_finish_time.push(node);
     return;
 }
 
@@ -139,14 +140,15 @@ int main()
         // Second pass
         // Each node in forward graph
         // In the order specified by the finishing times
-        for (auto it = nodes_in_asc_finish_time.rbegin(); it != nodes_in_asc_finish_time.rend(); ++it)
+        while (not nodes_in_asc_finish_time.empty())
         {
-            s = *it;
+            s = nodes_in_asc_finish_time.top();
             // Ignore if finished or seen
             if (not nodes_seen.contains(s))
             {
                 DFS_Loop_Two(fwd_graph, s);
-            }            
+            }
+            nodes_in_asc_finish_time.pop();
         };
 
         // Count leader group sizes
