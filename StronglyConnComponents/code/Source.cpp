@@ -1,4 +1,4 @@
-#include <algorithm> // sort
+#include <algorithm> // sort vector
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -6,11 +6,21 @@
 #include <tuple>
 #include <map>
 #include <set>
+#include <chrono>
 
 #define FILEPATH_NUMBER 2
 
 // And just for fun...
 #define report(a) std::cout << "SCC " << a << " has size " << SCC_Sizes[a] << std::endl
+
+auto time1 = std::chrono::high_resolution_clock::now();
+
+void timeReport(auto time2, std::string remark)
+{
+    auto milliseconds_integer = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1);
+    std::cout << "It took " << milliseconds_integer.count() << " ms to " << remark << std::endl;
+}
+
 
 // Path is relative to the project root (not this file's location)
 const std::string FILEPATH[]
@@ -149,6 +159,10 @@ int main()
     }
     else
     {
+
+        auto time2 = std::chrono::high_resolution_clock::now();
+        timeReport(time2, "read file");
+
         // First pass
         // Start DFS from every node in reversed graph, unless already explored
         for (const auto& pair : rev_graph)
@@ -162,7 +176,9 @@ int main()
 
         nodes_seen = {}; // Empty
 
-        std::cout << "made it this far" << std::endl;
+        time2 = std::chrono::high_resolution_clock::now();
+        timeReport(time2, "made it this far");
+
 
         currReccChain = {}; // I think it would be empty anyway
 
@@ -179,6 +195,9 @@ int main()
             nodes_in_asc_finish_time.pop();
         };
 
+        time2 = std::chrono::high_resolution_clock::now();
+        timeReport(time2, "total run time");
+
         // Count leader group sizes
         std::vector<int> SCC_Sizes;
 
@@ -193,6 +212,7 @@ int main()
         {
             report(i);
         }
+
         return 0;
     }
 }
