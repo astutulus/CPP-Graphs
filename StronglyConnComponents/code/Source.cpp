@@ -7,7 +7,7 @@
 #include <map>
 #include <set>
 
-#define FILEPATH_NUMBER 1
+#define FILEPATH_NUMBER 2
 
 // And just for fun...
 #define report(a) std::cout << "SCC " << a << " has size " << SCC_Sizes[a] << std::endl
@@ -43,7 +43,7 @@ static bool build_graphs()
             int firstNode = int(firstStr);
             int secondNode = int(secondStr);
             // Ensure each graph contains both nodes mentioned
-            for (  std::map<int, std::set<int>*>  *graph : { &fwd_graph, &rev_graph })
+            for (std::map<int, std::set<int>*>* graph : { &fwd_graph, &rev_graph })
             {
                 for (auto node : { firstNode, secondNode })
                 {
@@ -74,7 +74,7 @@ Depth First Search
 @param graph - The complete graph
 @param node  - The start node
 */
-static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
+static void DFS_Loop_One(std::map<int, std::set<int>*>& graph, int node)
 {
     currReccChain.push(node);
     while (not currReccChain.empty())
@@ -82,10 +82,11 @@ static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
         int node_peek = currReccChain.top();
         nodes_seen.insert(node_peek);
 
-        std::set<int> * outgoing_connections = graph[node_peek];
+        std::set<int>* outgoing_connections = graph[node_peek];
 
         bool foundUnseen = false;
-        for (int connection : *outgoing_connections) {
+        for (int connection : *outgoing_connections) 
+        {
             if (not nodes_seen.contains(connection))
             {
                 foundUnseen = true;
@@ -104,26 +105,37 @@ static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
 
 int s;
 
-static void DFS_Loop_Two(std::map<int, std::set<int>*> &graph, int node)
+static void DFS_Loop_Two(std::map<int, std::set<int>*>& graph, int node)
 {
-    nodes_seen.insert(node);
-    // Find all outgoing nodes
-    std::set<int>* outgoing_connections = graph[node];
-
-    for (int connection : *outgoing_connections)
+    currReccChain.push(node);
+    while (not currReccChain.empty())
     {
-        if (not nodes_seen.contains(connection))
+        int node_peek = currReccChain.top();
+        nodes_seen.insert(node_peek);
+        // Find all outgoing nodes
+        std::set<int>* outgoing_connections = graph[node_peek];
+
+        bool foundUnseen = false;
+        for (int connection : *outgoing_connections)
         {
-            DFS_Loop_Two(graph, connection);
+            if (not nodes_seen.contains(connection))
+            {
+                foundUnseen = true;
+                currReccChain.push(connection);
+                break;
+            }
+        }
+
+        if (not foundUnseen) // flag curr node as finished
+        {
+            if (not leader_groups.contains(s))
+            {
+                leader_groups[s] = new std::set<int>;
+            }
+            leader_groups[s]->insert(node_peek);
+            currReccChain.pop();
         }
     }
-
-    if (not leader_groups.contains(s))
-    {
-        leader_groups[s] = new std::set<int>;
-    }
-    leader_groups[s]->insert(node);
-    return;
 }
 
 /*
@@ -138,11 +150,10 @@ int main()
     else
     {
         // First pass
-        // Start DFS from every node in reversed graph.
+        // Start DFS from every node in reversed graph, unless already explored
         for (const auto& pair : rev_graph)
         {
             int node = pair.first;
-            // A node already seen by a previous DFS doesn't need to be explored again.
             if (not nodes_seen.contains(node))
             {
                 DFS_Loop_One(rev_graph, node);
@@ -151,13 +162,16 @@ int main()
 
         nodes_seen = {}; // Empty
 
+        std::cout << "made it this far" << std::endl;
+
+        currReccChain = {}; // I think it would be empty anyway
+
         // Second pass
         // Each node in forward graph
         // In the order specified by the finishing times
         while (not nodes_in_asc_finish_time.empty())
         {
             s = nodes_in_asc_finish_time.top();
-            // Ignore if finished or seen
             if (not nodes_seen.contains(s))
             {
                 DFS_Loop_Two(fwd_graph, s);
