@@ -7,11 +7,14 @@
 #include <map>
 #include <set>
 
-// Select test without re-typing
+// Select FILEPATH without re-typing
+const int FILEPATH_NUMBER = 1;
+
 const std::string FILEPATH[]
 {
     // Path is relative to the project root (not this file's location)
     "assignment-data\\SCC.txt",
+    "..\\GraphSln\\sample-data\\test_pairs.txt",
     "..\\GraphSln\\sample-data\\test_pairs_2.txt"
 };
 
@@ -23,7 +26,7 @@ std::map<int, std::set<int>*> leader_groups;
 
 static bool build_graphs()
 {
-    std::string fn = FILEPATH[1];
+    std::string fn = FILEPATH[FILEPATH_NUMBER];
     std::ifstream inputFile(fn);
     if (!inputFile)
     {
@@ -69,7 +72,7 @@ Depth First Search
 @param graph - The complete graph
 @param node  - The start node
 */
-static void DFS_Loop_One(std::map<int, std::set<int>*>& graph, int node)
+static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
 {
     currReccChain.push(node);
     while (not currReccChain.empty())
@@ -149,11 +152,15 @@ int main()
         // Second pass
         // Each node in forward graph
         // In the order specified by the finishing times
-
-        for (auto it = nodes_in_asc_finish_time.rbegin(); it != nodes_in_asc_finish_time.rend(); ++it)
+        while (not nodes_in_asc_finish_time.empty())
         {
-            s = *it;
-            DFS_Loop_Two(fwd_graph, s);
+            s = nodes_in_asc_finish_time.top();
+            // Ignore if finished or seen
+            if (not nodes_seen.contains(s))
+            {
+                DFS_Loop_Two(fwd_graph, s);
+            }
+            nodes_in_asc_finish_time.pop();
         };
 
         // Count leader group sizes
@@ -165,17 +172,11 @@ int main()
         }
 
         std::sort(SCC_Sizes.begin(), SCC_Sizes.end(), std::greater{});
-
         int numberToPrint = std::min(5, (int)SCC_Sizes.size());
-
-
         for (size_t i = 0; i < numberToPrint; i++)
         {
-
             std::cout << i << " -> " << SCC_Sizes[i] << std::endl;
         }
-           
-
         return 0;
     }
 }
