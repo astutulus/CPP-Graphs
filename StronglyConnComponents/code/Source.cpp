@@ -6,7 +6,9 @@
 #include <map>
 #include <set>
 
-// Select test without re-typing
+// Select FILEPATH without re-typing
+const int FILEPATH_NUMBER = 1;
+
 const std::string FILEPATH[]
 {
     // Path is relative to the project root (not this file's location)
@@ -23,7 +25,7 @@ std::map<int, std::set<int>*> leader_groups;
 
 static bool build_graphs()
 {
-    std::string fn = FILEPATH[1];
+    std::string fn = FILEPATH[FILEPATH_NUMBER];
     std::ifstream inputFile(fn);
     if (!inputFile)
     {
@@ -70,12 +72,6 @@ Depth First Search
 */
 static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
 {
-    // Ignore if finished or seen
-    if (nodes_seen.contains(node))
-    {
-        return;
-    }
-
     nodes_seen.insert(node);
     // Find all outgoing nodes
     std::set<int>* outgoing_connections = graph[node];
@@ -95,12 +91,6 @@ int s;
 
 static void DFS_Loop_Two(std::map<int, std::set<int>*> &graph, int node)
 {
-    // Ignore if finished or seen
-    if (nodes_seen.contains(node))
-    {
-        return;
-    }
-
     nodes_seen.insert(node);
     // Find all outgoing nodes
     std::set<int>* outgoing_connections = graph[node];
@@ -136,8 +126,12 @@ int main()
         // Each node in reversed graph
         for (const auto& pair : rev_graph)
         {
-            int firstNode = pair.first;
-            DFS_Loop_One(rev_graph, firstNode);
+            int node = pair.first;
+            // Ignore if finished or seen
+            if (not nodes_seen.contains(node))
+            {
+                DFS_Loop_One(rev_graph, node);
+            }
         }
 
         nodes_seen = {}; // Empty
@@ -148,7 +142,11 @@ int main()
         for (auto it = nodes_in_asc_finish_time.rbegin(); it != nodes_in_asc_finish_time.rend(); ++it)
         {
             s = *it;
-            DFS_Loop_Two(fwd_graph, s);
+            // Ignore if finished or seen
+            if (not nodes_seen.contains(s))
+            {
+                DFS_Loop_Two(fwd_graph, s);
+            }            
         };
 
         // Count leader group sizes
@@ -160,17 +158,11 @@ int main()
         }
 
         std::sort(SCC_Sizes.begin(), SCC_Sizes.end(), std::greater{});
-
         int numberToPrint = std::min(5, (int)SCC_Sizes.size());
-
-
         for (size_t i = 0; i < numberToPrint; i++)
         {
-
             std::cout << i << " -> " << SCC_Sizes[i] << std::endl;
         }
-           
-
         return 0;
     }
 }
