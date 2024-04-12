@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stack>
 #include <tuple>
 #include <map>
 #include <set>
@@ -58,48 +59,48 @@ static bool build_graphs()
 
 std::set<int> nodes_seen{};
 
+std::stack<int> currReccChain;
+
 int curr_finish_time = 0;
-// std::map<int, int> node_finish_times;
-std::vector<int> nodes_in_asc_finish_time;
+std::stack<int> nodes_in_asc_finish_time{};
 
 /*
 Depth First Search
 @param graph - The complete graph
 @param node  - The start node
 */
-static void DFS_Loop_One(std::map<int, std::set<int>*> &graph, int node)
+static void DFS_Loop_One(std::map<int, std::set<int>*>& graph, int node)
 {
-    // Ignore if finished or seen
-    if (nodes_seen.contains(node))
+    currReccChain.push(node);
+    while (not currReccChain.empty())
     {
-        return;
-    }
+        int node_peek = currReccChain.top();
+        nodes_seen.insert(node_peek);
 
-    nodes_seen.insert(node);
-    // Find all outgoing nodes
-    std::set<int>* outgoing_connections = graph[node];
+        std::set<int> * outgoing_connections = graph[node_peek];
 
-    for (int connection : *outgoing_connections)
-    {
-        if (not nodes_seen.contains(connection))
+        bool foundUnseen = false;
+        for (int connection : *outgoing_connections) {
+            if (not nodes_seen.contains(connection))
+            {
+                foundUnseen = true;
+                currReccChain.push(connection);
+                break;
+            }
+        }
+
+        if (not foundUnseen) // flag curr node as finished
         {
-            DFS_Loop_One(graph, connection);
+            currReccChain.pop();
+            nodes_in_asc_finish_time.push(node_peek);
         }
     }
-    nodes_in_asc_finish_time.push_back(node);
-    return;
 }
 
 int s;
 
 static void DFS_Loop_Two(std::map<int, std::set<int>*> &graph, int node)
 {
-    // Ignore if finished or seen
-    if (nodes_seen.contains(node))
-    {
-        return;
-    }
-
     nodes_seen.insert(node);
     // Find all outgoing nodes
     std::set<int>* outgoing_connections = graph[node];
@@ -132,11 +133,15 @@ int main()
     else
     {
         // First pass
-        // Each node in reversed graph
+        // Start DFS from every node in reversed graph.
         for (const auto& pair : rev_graph)
         {
-            int firstNode = pair.first;
-            DFS_Loop_One(rev_graph, firstNode);
+            int node = pair.first;
+            // A node already seen by a previous DFS doesn't need to be explored again.
+            if (not nodes_seen.contains(node))
+            {
+                DFS_Loop_One(rev_graph, node);
+            }
         }
 
         nodes_seen = {}; // Empty
@@ -144,6 +149,7 @@ int main()
         // Second pass
         // Each node in forward graph
         // In the order specified by the finishing times
+
         for (auto it = nodes_in_asc_finish_time.rbegin(); it != nodes_in_asc_finish_time.rend(); ++it)
         {
             s = *it;
