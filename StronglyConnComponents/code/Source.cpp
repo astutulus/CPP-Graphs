@@ -7,7 +7,10 @@
 #include <map>
 #include <set>
 
-# define FILEPATH_NUMBER 1
+#define FILEPATH_NUMBER 1
+
+// And just for fun...
+#define report(a) std::cout << "SCC " << a << " has size " << SCC_Sizes[a] << std::endl
 
 // Path is relative to the project root (not this file's location)
 const std::string FILEPATH[]
@@ -174,7 +177,7 @@ int main()
         int numberToPrint = std::min(5, (int)SCC_Sizes.size());
         for (size_t i = 0; i < numberToPrint; i++)
         {
-            std::cout << i << " -> " << SCC_Sizes[i] << std::endl;
+            report(i);
         }
         return 0;
     }
