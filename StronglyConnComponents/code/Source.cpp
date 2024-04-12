@@ -7,12 +7,11 @@
 #include <map>
 #include <set>
 
-// Select FILEPATH without re-typing
-const int FILEPATH_NUMBER = 1;
+# define FILEPATH_NUMBER 1
 
+// Path is relative to the project root (not this file's location)
 const std::string FILEPATH[]
 {
-    // Path is relative to the project root (not this file's location)
     "assignment-data\\SCC.txt",
     "..\\GraphSln\\sample-data\\test_pairs.txt",
     "..\\GraphSln\\sample-data\\test_pairs_2.txt"
