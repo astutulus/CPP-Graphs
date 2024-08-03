@@ -24,11 +24,6 @@
   <ItemGroup>
     <Text Include="assignment-data\SCC.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GraphSln\GraphSln.vcxproj">
-      <Project>{719eaa99-8478-44f9-8dbe-61164c6116b7}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

@@ -2,9 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/GraphSln
-/x64/Debug
-/GraphSln/x64/Debug
-/StronglyConnComponents/x64/Debug
-/GraphSln/Debug
 /.vs
+/x64
+
+/StronglyConnComponents/x64/*
+/StronglyConnComponents/Strongly.469b719a/*

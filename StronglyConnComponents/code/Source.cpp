@@ -26,8 +26,8 @@ void timeReport(auto time2, std::string remark)
 const std::string FILEPATH[]
 {
     "assignment-data\\SCC.txt",
-    "..\\GraphSln\\sample-data\\test_pairs.txt",
-    "..\\GraphSln\\sample-data\\test_pairs_2.txt"
+    ".\\sample-data\\test_pairs.txt",
+    ".\\sample-data\\test_pairs_2.txt"
 };
 
 // Kosaraju requires both directions of graph
