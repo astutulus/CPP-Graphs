@@ -11,16 +11,15 @@
 #define FILEPATH_NUMBER 2
 
 // And just for fun...
-#define report(a) std::cout << "SCC " << a << " has size " << SCC_Sizes[a] << std::endl
+#define report(a) std::cout << std::format("Size report: SCC {} has size {}", a, SCC_Sizes[a]) << std::endl
 
 auto time1 = std::chrono::high_resolution_clock::now();
 
 void timeReport(auto time2, std::string remark)
 {
     auto milliseconds_integer = std::chrono::duration_cast<std::chrono::milliseconds>(time2 - time1);
-    std::cout << "It took " << milliseconds_integer.count() << " ms to " << remark << std::endl;
+    std::cout << std::format("Time report: It took {} milliseconds to {}", milliseconds_integer.count(), remark) << std::endl;
 }
-
 
 // Path is relative to the project root (not this file's location)
 const std::string FILEPATH[]
